@@ -14,17 +14,23 @@
 <body>
 
 
-  <div class="container">
-    <div class="row">
-      <h1>Teenage Mutant Ninja Turtles Trivia</h1>
-    </div>
-
-    <div class="row">
-      <div class="col-md-6 col-md-offset-3" id="questionArea">
-        <button type="button" class="btn btn-warning btn-sml" id="startBtn">Start</button>
-
-      </div>
-    </div>
+  <div class='container'>
+    <button class='btn btn-primary' id='startBtn'>Start</button>
+    <!-- Question page -->
+    <div id=timeRemaining></div>
+    <div id=currentQuestion></div>
+    <div class='questionArea'></div>
+    <div class='answerChoices'></div>
+    <!-- Answer Page -->
+    <div id=message></div>
+    <div id=correctedAnswer></div>
+    <div id=gif></div>
+    <!-- Scoreboard -->
+    <div id=endGameMessage></div>
+    <div id=correctAnswers></div>
+    <div id=incorrectAnswers></div>
+    <div id=notAnswered></div>
+    <div id='restartBtn'></div>
   </div>
 
 
