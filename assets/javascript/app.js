@@ -45,7 +45,7 @@ var triviaQuestions = [
     choices: ["Star Wars", "Daredevil", "X-Men", "The Hulk"]
   }, {
     question: "Who are the creators of TMNT?",
-    rightAnswer: 3,
+    rightAnswer: 2,
     choices: ["Stan Lee and Steve Ditko", "Neil Gaiman and Terry Pratchett", "Peter Laird and Kevin Eastman", "Holden McNeil and Banky Edwards"]
   }, {
     question: "Who is the Turtle's sensei?",
@@ -61,13 +61,13 @@ var triviaQuestions = [
     choices: ["The Out of the Shell tour", "Out of the Shadows Tour", "Tour de Pizza", "4 Brothers Tour"]
   }];
 
-var currentQuestion;
-var correctAnswer;
-var incorrectAnswer;
-var notAnswered;
-var seconds;
+var currentQuestion = 0;
+var correctAnswer = 0;
+var incorrectAnswer = 0;
+var notAnswered = 0;
+var seconds = 10;
 var time;
-var questionsAnswered;
+var questionsAnswered = 0;
 var userChoice;
 var choiceText = {
   correct: "Most excellent, dude, I was thinking the same thing, myself",
@@ -75,8 +75,10 @@ var choiceText = {
   timeOut: "You don’t flirt with the enemy Leo. You take them down!",
   done: "Most excellent, dude, I was thinking the same thing, myself."
 }
+$("#restartBtn").hide();
 
 $("#startBtn").on("click", function () {
+
   $(this).hide();
   newGame();
 });
@@ -89,30 +91,88 @@ function newGame() {
   $("#endGameMessage").empty();
   $("#correctAnswers").empty();
   $("#incorrectAnswers").empty();
-  $("#incorrectAnswers").empty();
   $("#notAnswered").empty();
-  currentQuestion = 0;
-  correctAnswer = 0;
-  incorrectAnswer = 0;
-  notAnswered = 0;
+
   newQuestion();
 }
+
 function newQuestion() {
-  $("#message").empty;
-  $("#correctedAnswer").empty;
-  // $("#gif").empty();
+  $("#message").empty();
+  $("#correctedAnswer").empty();
   answered = true;
   //appends questions and answer to the page
   $("#currentQuestion").html("Question #: " + (currentQuestion + 1) + "/" + triviaQuestions.length);
   $(".questionArea").html("<h2>" + triviaQuestions[currentQuestion].question + "</h2>");
   for (var i = 0; i < 4; i++) {
-    var ansChoices = $("<div>");
+    var ansChoices = $("<button>");
     ansChoices.text(triviaQuestions[currentQuestion].choices[i]);
     ansChoices.attr({ "data-index": i });
-    ansChoices.addClass("thisChoice");
+    ansChoices.addClass("btn btn-block btn-success");
     $(".answerChoices").append(ansChoices);
-  }
+  };
 
+  countdown();
+
+  $(".btn").on("click", function () {
+    userChoice = $(this).data("index");
+    clearInterval(time);
+    answerPage();
+  });
+}
+function countdown() {
+  seconds = 10;
+  $("#timeRemaining").html("<h3>Time Remaining: " + seconds + "</h3>");
+  answered = true;
+  time = setInterval(showCountdown, 1000);
+}
+
+function showCountdown() {
+  seconds--;
+  $("#timeRemaining").html("<h3>Time Remaining: " + seconds + "</h3>")
+  if (seconds < 1) {
+    clearInterval(time);
+    answered = false;
+    answerPage();
+  }
+}
+function answerPage() {
+  $("#currentQuestion").empty();
+  $(".btn").hide();
+  $(".questionArea").empty();
+
+  var correctText = triviaQuestions[currentQuestion].choices[triviaQuestions[currentQuestion].rightAnswer];
+  var correctAnswerIndex = triviaQuestions[currentQuestion].rightAnswer;
+  if ((userChoice == correctAnswerIndex) && (answered == true)) {
+    correctAnswer++;
+    $("#message").html(choiceText.correct);
+  } else if ((userChoice != correctAnswerIndex) && (answered == true)) {
+    incorrectAnswer++
+    $("#message").html(choiceText.incorrect);
+    $("#correctedAnswer").html("The right answer was: " + correctText);
+  } else {
+    notAnswered++
+    $("#message").html(choiceText.timeOut);
+    $("#correctedAnswer").html("The right answer was: " + correctText);
+    answered = true;
+  }
+  if (currentQuestion == (triviaQuestions.length - 1)) {
+    setTimeout(score, 2000);
+  } else {
+    currentQuestion++;
+    setTimeout(newQuestion, 2000);
+  }
+}
+function score() {
+  $("#timeRemaining").empty();
+  $("#message").empty();
+  $("#correctedAnswer").empty();
+  $("#endGameMessage").html(choiceText.done);
+  $("#correctAnswers").html("You got " + correctAnswer + " right.");
+  $("#incorrectAnswers").html("You got " + incorrectAnswer + " wrong.");
+  $("#notAnswered").html("You did not answer " + notAnswered + " questions.");
+  $("#restartBtn").addClass("reset");
+  $("#restartBtn").show();
+  $("#restartBtn").html("Play Again?")
 }
 
 
